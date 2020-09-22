@@ -84,3 +84,27 @@ for (int i = 0; i < yah;i++){
 
 
 
+//Here is your code
+//your code si fixed
+ /*
+  while (argc<=1);
+
+  int  key = argv[1];
+
+  char *symbolsUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  char *symbolsLower = "abcdefghijklmnopqrstuvwxyz";
+  printf("Text: ");
+  fgets(userinput, 200, stdin);
+  int stringLength = strlen(userinput);
+  for (int i = 0; i< stringLength; i++)
+  {
+    if (isalnum(userinput[i]) ==0)
+    {
+      if (isupper(userinput[i]) ==0)
+      {
+          cipherText += userinput[i];//pass it the symbols rather
+      }
+    }
+  }
+  // printf("ciphertext");
+  */
