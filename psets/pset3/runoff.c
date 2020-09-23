@@ -1,6 +1,6 @@
 #include <cs50.h>
 #include <stdio.h>
-
+#include <string.h>
 // Max voters and candidates
 #define MAX_VOTERS 100
 #define MAX_CANDIDATES 9
@@ -128,6 +128,14 @@ int main(int argc, string argv[])
 bool vote(int voter, int rank, string name)
 {
     // TODO
+    for (int i=0; i< candidate_count; i++)
+    {
+        if(strcmp(candidates[i].name, name) == 0)
+        {
+            preferences[voter][rank] = i;
+            return true;
+        }
+    }
     return false;
 }
 
@@ -135,6 +143,17 @@ bool vote(int voter, int rank, string name)
 void tabulate(void)
 {
     // TODO
+    for (int i=0; i < voter_count; i++)
+    {
+        for (int j=0; i < candidate_count; j++)
+        {
+            if (candidates[preferences[i][j]].eliminated == false)
+            {
+                candidates[preferences[i][j]].votes += 1;
+                break;
+            }
+        }
+    }
     return;
 }
 
@@ -142,26 +161,71 @@ void tabulate(void)
 bool print_winner(void)
 {
     // TODO
+    int maxvote = candidates[0].votes;
+    for (int i=0; i<candidate_count; i++)
+    {
+        if(candidates[i].votes > maxvote)
+        {
+            maxvote = candidates[i].votes
+        }
+    }
+    //checking for person with this hight vote
+    for (int i=0; i <candidate_count; i++)
+    {
+        if (candidate[i].votes == maxvote)
+        {
+            printf("%s", candidates[i].name);
+            return true;
+            // break;
+        }
+    }
     return false;
 }
 
 // Return the minimum number of votes any remaining candidate has
 int find_min(void)
 {
+    int min = candidates[0].votes;
     // TODO
-    return 0;
+    for (int i=0; i < candidate_count; i++)
+    {
+        if (candidates[i].votes < min)
+        {
+            min = candidates[i].votes
+        }
+    }return min;
+    // return 0;
 }
 
 // Return true if the election is tied between all candidates, false otherwise
 bool is_tie(int min)
 {
     // TODO
-    return false;
+    // int basevote = candidates[0].votes;
+    for (int i=0; i< candidate_count; i++)
+    {
+        if (candidates[i].eliminated == false && candidates[i].votes != min) return false;
+    }
+    return true;
 }
 
 // Eliminate the candidate (or candidates) in last place
 void eliminate(int min)
 {
     // TODO
+    for (int i=0; i < candidate_count; i++)
+    {
+        // if (candidates[i].eliminated == true)
+        //searching for  candidate with smallest vote(min)
+        if (candidates[i].votes == min)
+        {
+            //checking whether eliminated
+            if (candidates[i].eliminated == true)
+            {
+                break;
+            }
+            else candidates[i].eliminated = true;
+        }
+    }
     return;
 }
