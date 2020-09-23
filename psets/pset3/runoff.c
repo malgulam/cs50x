@@ -163,22 +163,13 @@ void tabulate(void)
 bool print_winner(void)
 {
     // TODO
-    int maxvote = candidates[0].votes;
-    for (int i=0; i<candidate_count; i++)
+    for (int i = 0; i < candidate_count; i++)
     {
-        if(candidates[i].votes > maxvote)
+        string most = candidates[i].name;
+        if (candidates[i].votes > voter_count / 2)
         {
-            maxvote = candidates[i].votes;
-        }
-    }
-    //checking for person with this hight vote
-    for (int i=0; i <candidate_count; i++)
-    {
-        if (candidates[i].votes == maxvote)
-        {
-            printf("%s", candidates[i].name);
+            printf("%s\n", most);
             return true;
-            // break;
         }
     }
     return false;
@@ -187,16 +178,15 @@ bool print_winner(void)
 // Return the minimum number of votes any remaining candidate has
 int find_min(void)
 {
-    int min = candidates[0].votes;
-    // TODO
-    for (int i=0; i < candidate_count; i++)
+    int minvotes = voter_count;
+    for (int i = 0; i < candidate_count; i++)
     {
-        if (candidates[i].votes < min)
+        if (candidates[i].eliminated == false && candidates[i].votes < minvotes)
         {
-            min = candidates[i].votes;
+            minvotes = candidates[i].votes;
         }
-    }return min;
-    // return 0;
+    }
+    return minvotes;
 }
 
 // Return true if the election is tied between all candidates, false otherwise
