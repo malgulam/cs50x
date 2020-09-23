@@ -143,9 +143,9 @@ bool vote(int voter, int rank, string name)
 void tabulate(void)
 {
     // TODO
-    for (int i=0; i < voter_count; i++)
+    for (int i = 0; i < voter_count; i++)
     {
-        for (int j=0; i < candidate_count; j++)
+        for (int j = 0; j < candidate_count; j++)
         {
             if (candidates[preferences[i][j]].eliminated == false)
             {
@@ -153,7 +153,9 @@ void tabulate(void)
                 break;
             }
         }
+        
     }
+
     return;
 }
 
@@ -166,13 +168,13 @@ bool print_winner(void)
     {
         if(candidates[i].votes > maxvote)
         {
-            maxvote = candidates[i].votes
+            maxvote = candidates[i].votes;
         }
     }
     //checking for person with this hight vote
     for (int i=0; i <candidate_count; i++)
     {
-        if (candidate[i].votes == maxvote)
+        if (candidates[i].votes == maxvote)
         {
             printf("%s", candidates[i].name);
             return true;
@@ -191,7 +193,7 @@ int find_min(void)
     {
         if (candidates[i].votes < min)
         {
-            min = candidates[i].votes
+            min = candidates[i].votes;
         }
     }return min;
     // return 0;
