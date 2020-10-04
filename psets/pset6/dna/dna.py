@@ -21,7 +21,7 @@ def compare(lst1, lst2):
 #checking for len of the sys arguments given
 if len(argv) < 3:
     print('Usage: python dna.py data.csv sequence.txt')
-
+    exit()
 #assigning the argv contents to file
 sequenceFile = argv[2]
 dnaFile = argv[1]
@@ -49,7 +49,44 @@ sequences = {}
 #setting database_count_list to a dict of sequences
 for item in database_count_List:
     sequences[item] = 1
-#count every repeti
+print(sequences)
+#count every repetition of dna in dna sequence
+for key in sequences:
+    l = len(key)
+    tempMax = 0
+    temp = 0
+    for i in range(len(lines)):
+        # after having counted a sequence it skips at the end of it to avoid counting again
+        while temp > 0:
+            temp -= 1
+            continue
+
+        # if the segment of dna corresponds to the key and there is a repetition of it we start counting
+        if lines[i: i + l] == key:
+            while lines[i - l: i] == lines[i: i + l]:
+                temp += 1
+                i += l
+
+            # it compares the value to the previous longest sequence and if it is longer it overrides it
+            if temp > tempMax:
+                tempMax = temp
+
+    # store the longest sequences in the dictionary using the correspondent key
+    sequences[key] += tempMax
+with open(dnaFile, newline='') as peoplefile:
+    people = csv.DictReader(peoplefile)
+    for person in people:
+        match = 0
+        # compares the sequences to every person and prints name before leaving the program if there is a match
+        for dna in sequences:
+            if sequences[dna] == int(person[dna]):
+                match += 1
+        if match == len(sequences):
+            print(person['name'])
+            exit()
+    print(sequences)
+    print(match)
+    print("No match")
 #counting the occurences of the dnas in the sequences file
 # dna_count_dict = {}
 # for i in range(len(database_count_List)):
@@ -61,7 +98,7 @@ for item in database_count_List:
 #     dna_count_dict.setdefault(database_count_List[i], dna_count_in_sequences)
 
 #checking who the dna belongs to
-for key in
+
 # currentUser_dna_count_list = list()
 # checks_passed = 0
 # with open(dnaFile, newline='') as csvFile:
