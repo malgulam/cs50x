@@ -4,7 +4,6 @@ sys.path.append(".")
 
 
 #progress bar
-
 def progressBar(current, total, barLength=20):
     percent = float(current) * 100 / total
     arrow = '-' * int(percent / 100 * barLength - 1) + '>'
@@ -20,16 +19,8 @@ def pattern_retrieval(file_path):
     continuous_line_of_text = str()
     for line in lines:
         continuous_line_of_text += line
-    #reading 4 letters at a time
-    tmp = copy.copy(continuous_line_of_text)
-    # appending the patterns
-    while len(tmp)  != 0:
-        ptt = str(tmp[0:4])
-        if ptt in patterns.keys():
-            patterns[ptt] += 1
-        else:
-            patterns[ptt] = 1
-        tmp = tmp[4:] 
+    substrings = ['AGAT', 'AATG', 'TATC']
+    
     return patterns
 
 #function to return tupelised lists
@@ -40,7 +31,7 @@ def tupelise(lst):
         tmpLst[i] = (tmpLst[i],)
     return tmpLst
         
-
+#function to add columns and append data to db
 def db_include(path, filename):
     full_file_path = path + filename
     patterns = pattern_retrieval(full_file_path)
@@ -82,10 +73,9 @@ def db_include(path, filename):
             pass
         for nc in new_columns:
             c.execute('''ALTER TABLE sequences ADD COLUMN %s INTEGER''' %nc)
-        # c.executemany(f'''ALTER TABLE sequences ADD COLUMN ? INTEGER''', new_columns)
         conn.commit()
-        conn.close()
-        
+        #todo: insert data into columns!
+        #todo: work on pattern function to return correct dict and values !
 
 
         
@@ -95,11 +85,13 @@ def db_include(path, filename):
         #FIX!
         #this is due to the  existence of columns and re-creation of them..ignore!
         print('an error ocurred')
-        
+#main driver code
+def main():
+    #retrieve every filename in sequences directory
+    path = 'sequences/'
+    filesList = os.listdir(path)
 
-#retrieve every filename in sequences directory
-path = 'sequences/'
-filesList = os.listdir(path)
+    for file in filesList:
+        db_include(path, file)
 
-for file in filesList:
-    db_include(path, file)
+main()
