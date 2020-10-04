@@ -23,119 +23,65 @@ if len(argv) < 3:
     print('Usage: python dna.py data.csv sequence.txt')
     exit()
 #assigning the argv contents to file
-sequenceFile = argv[2]
 dnaFile = argv[1]
+sequenceFile = argv[2]
 
-#working on sequence file
-lines = str()
-with open(sequenceFile, 'r') as sf:
-     for line in sf.readlines():
-         lines += line
+#dna sequence as string
+dnaSequence = str()
+with open(sequenceFile, 'r') as f:
+    for line in f.readlines():
+        dnaSequence += line
+f.close()
 
-#working on database
-database_count_List = list()
-#finding out the dnas to count
+#find the dna samples to find count of
+sequences = {}
+dna_sequences_to_find = list()
 with open(dnaFile, newline='') as csvFile:
     reader = csv.DictReader(csvFile)
     for row in reader:
         for key, value in row.items():
-            database_count_List.append(key)
+            # put the sequences you're looking for into a list
+            dna_sequences_to_find.append(key)
         break
-    # get rid of the name in the list
-    database_count_List.pop(0)
-
-#dict to store the dna samples and their counts in
-sequences = {}
-#setting database_count_list to a dict of sequences
-for item in database_count_List:
+    #get rid of name
+    dna_sequences_to_find.pop(0)
+#transfering the data in dna_sequences_to_find list to sequences dict
+for item in dna_sequences_to_find:
     sequences[item] = 1
-print(sequences)
-#count every repetition of dna in dna sequence
-for key in sequences:
-    l = len(key)
-    tempMax = 0
-    temp = 0
-    for i in range(len(lines)):
-        # after having counted a sequence it skips at the end of it to avoid counting again
-        while temp > 0:
-            temp -= 1
+#find the number of time each dna in sequences dict appears in the dnaSequence str
+for key,value in sequences.items():
+    keylen = len(key)
+    tmpNum = 0
+    tmpNum2 = 0
+    tmp_dnaSequence = dnaSequence[:]
+    for i in range(len(tmp_dnaSequence)):
+        #finding occurences by slicing and matching
+        while tmpNum > 0:
+            tmpNum -= 1
             continue
-
-        # if the segment of dna corresponds to the key and there is a repetition of it we start counting
-        if lines[i: i + l] == key:
-            while lines[i - l: i] == lines[i: i + l]:
-                temp += 1
-                i += l
-
-            # it compares the value to the previous longest sequence and if it is longer it overrides it
-            if temp > tempMax:
-                tempMax = temp
-
-    # store the longest sequences in the dictionary using the correspondent key
-    sequences[key] += tempMax
-with open(dnaFile, newline='') as peoplefile:
-    people = csv.DictReader(peoplefile)
-    for person in people:
-        match = 0
-        # compares the sequences to every person and prints name before leaving the program if there is a match
-        for dna in sequences:
-            if sequences[dna] == int(person[dna]):
-                match += 1
-        if match == len(sequences):
-            print(person['name'])
-            exit()
-    print(sequences)
-    print(match)
-    print("No match")
-#counting the occurences of the dnas in the sequences file
-# dna_count_dict = {}
-# for i in range(len(database_count_List)):
-#     dna_substring = database_count_List[i]
-#     #finding how many times this substring has appeared in the
-#     #sequences text
-#     dna_count_in_sequences = lines.count(dna_substring)
-#     #adding the dna to the dna_count_dict as a default with its respective count
-#     dna_count_dict.setdefault(database_count_List[i], dna_count_in_sequences)
-
-#checking who the dna belongs to
-
-# currentUser_dna_count_list = list()
-# checks_passed = 0
-# with open(dnaFile, newline='') as csvFile:
-#     reader = csv.DictReader(csvFile)
-#     for row in reader:
-#         row_items = row.items()
-#         for key, value in row.items():
-#             currentUser_dna_count_list.append(value)
-#         # get rid of the name in the list
-#         currentUser_dna_count_list.pop(0)
-#
-#         for i in range(len(currentUser_dna_count_list)):
-#             #it'll look like row[AGATC]
-#             # print(currentUser_dna_count_list[i])
-#             if row[database_count_List[i]] == currentUser_dna_count_list[i]:
-#                 checks_passed += 1
-#             else:
-#                 checks_passed = 0
-#                 break
-#     #how about use items() list concentrated?
-#         currentUser_dna_count_list.clear()
-#         # if row_items[] ==
-#         current_row_as_list = (list(row_items)[1:])[:]
-#         dna_list_items = dna_count_dict.items()
-#         current_dna_lists_items_as_list = (list(dna_list_items)[:])[:]
-#         if compare(current_row_as_list , current_dna_lists_items_as_list) == True:
-#             name = ''
-#             for key in row.keys():
-#                 print('key:', key)
-#                 if key == 'name':
-#                     name += row[key]
-#                     break
-#             print(name)
-#             break
-#
-#         else:
-#             # print('NO!')
-#             current_row_as_list.clear()
-#             current_dna_lists_items_as_list.clear()
-#             continue
+        if tmp_dnaSequence[i:i+keylen] == key:
+            while tmp_dnaSequence[i:i+keylen] == tmp_dnaSequence[i - keylen:i]:
+                tmpNum += 1
+                i += keylen
+            if tmpNum > tmpNum2:
+                tmpNum2 = tmpNum
+#assign it to its respective key in sequences
+    sequences[key] += tmpNum2
+with open(dnaFile, newline='') as csvFile:
+    reader = csv.DictReader(csvFile)
+    checks_passed = 0
+    for row in reader:
+        for k, v in sequences.items():
+            if sequences[k] == int(row[k]):
+                checks_passed += 1
+                continue
+            else:
+                #set checks_passed back to zero
+                checks_passed = 0
+                break
+        if checks_passed == len(sequences):
+            print(row['name'])
+            sys.exit(0)
+    #if none of the people in each row had the passed check
+    print('No match')
+    sys.exit(1)
