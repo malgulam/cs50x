@@ -1,97 +1,159 @@
-#sequences db creator
-import os, sys, copy, sqlite3
-sys.path.append(".")
+# sequence db creator
+import os
+import sys
+import sqlite3
+import csv
 
 
-#progress bar
-def progressBar(current, total, barLength=20):
+# progress bar
+def progress_bar(current, total, bar_length=20):
     percent = float(current) * 100 / total
-    arrow = '-' * int(percent / 100 * barLength - 1) + '>'
-    spaces = ' ' * (barLength - len(arrow))
+    arrow = '-' * int(percent / 100 * bar_length - 1) + '>'
+    spaces = ' ' * (bar_length - len(arrow))
     print('Progress: [%s%s] %d %%' % (arrow, spaces, percent), end='\r')
 
-def pattern_retrieval(file_path):
-    patterns = {}
-    lines = list()
-    with open(file_path, 'r') as f:
-        lines = f.readlines()
-    f.close()
-    continuous_line_of_text = str()
-    for line in lines:
-        continuous_line_of_text += line
-    substrings = ['AGAT', 'AATG', 'TATC']
-    
-    return patterns
 
-#function to return tupelised lists
+# function to return tupelised lists
 def tupelise(lst):
     tmpLst = lst[:]
-    #tmp2 = list()
+    # tmp2 = list()
     for i in range(len(tmpLst)):
         tmpLst[i] = (tmpLst[i],)
     return tmpLst
-        
-#function to add columns and append data to db
-def db_include(path, filename):
-    full_file_path = path + filename
-    patterns = pattern_retrieval(full_file_path)
-    db_file = 'sequencesdb.db'
-    conn = sqlite3.connect(db_file)
-    try:
-        c = conn.cursor()
-        columns = list()
-        columns_data = list()
-        #create table
-        for key, value in patterns.items():
-            columns.append(key)
-            columns_data.append(value)
-        #creating tables and columns
-        # s = "CREATE TABLE sequences (File," + ', '.join(f"{col} INTEGER" for col in columns) + ")"
-        s = "CREATE TABLE IF NOT EXISTS sequences(File TEXT);"
-        c.execute(s)
-        # conn.commit()
-        #checking current columns
-        cursor = conn.execute('select * from sequences')
-        columns_present = list(map(lambda x: x[0], cursor.description))
-        print(columns_present)
-        new_columns = list()
-        
-        #checking whether new columns are already present
-        for i in range(len(columns)):
-            if columns[i] not in columns_present:
-                new_columns.append(columns[i])
-                
-            else:
-                pass
-        if new_columns != None:
-            # tupelise new_columns items  
-            tmpLST = new_columns[:]
-            new_columns.clear()
-            new_columns = tupelise(tmpLST)
-
-        else:
-            pass
-        for nc in new_columns:
-            c.execute('''ALTER TABLE sequences ADD COLUMN %s INTEGER''' %nc)
-        conn.commit()
-        #todo: insert data into columns!
-        #todo: work on pattern function to return correct dict and values !
 
 
-        
-        
-        
-    except sqlite3.OperationalError as e :
-        #FIX!
-        #this is due to the  existence of columns and re-creation of them..ignore!
-        print('an error ocurred')
-#main driver code
+#function to turn list into str separated by commas
+def convert_to_str(lst):
+    new_str = str()
+    for i in  range(len(lst)):
+        new_str += str(lst[i]) + ','
+    new_str = new_str[:len(new_str)-1]
+    return new_str
+
 def main():
-    #retrieve every filename in sequences directory
-    path = 'sequences/'
-    filesList = os.listdir(path)
+    sequences_files = list()
+    #concatenating the name of the path (sequences) to each file
+    for file in os.listdir('sequences/'):
+        sequences_files.append(f'sequences/{file}')
+    #todo: work on databases/large
+    large_database = "databases/large.csv"
+    large_database_dnas = list()
+    large_database_sequences = {}
+    with open(large_database, newline='') as largeCSVFile:
+        reader = csv.DictReader(largeCSVFile)
+        #fetching only first row and append to list
+        for row in reader:
+            for k,v in row.items():
+                large_database_dnas.append(k)
+            break
+        large_database_dnas.pop(0)
+    # print(large_database_dnas)
 
-    for file in filesList:
-        db_include(path, file)
+    #todo:get the count for every one in the dnas in every sequence.txt
+    for file in sequences_files:
+        lines = str()
+        with open(file, 'r') as f:
+            for line in f.readlines():
+                lines += line
+            #search for occurences of each substing
+            for item in large_database_dnas:
+                large_database_sequences[item] = 1
+            for key, value in large_database_sequences.items():
+                keylen = len(key)
+                tmpNum = 0
+                tmpNum2 = 0
+                tmp_dnaSequence = lines[:]
+                for i in range(len(tmp_dnaSequence)):
+                    # finding occurences by slicing and matching
+                    while tmpNum > 0:
+                        tmpNum -= 1
+                        continue
+                    if tmp_dnaSequence[i:i + keylen] == key:
+                        while tmp_dnaSequence[i:i + keylen] == tmp_dnaSequence[i - keylen:i]:
+                            tmpNum += 1
+                            i += keylen
+                        if tmpNum > tmpNum2:
+                            tmpNum2 = tmpNum
+                # assign it to its respective key in sequences
+                large_database_sequences[key] += tmpNum2
+            # print(file, large_database_sequences)
+            #working on db file
+            db_file = 'sequencesdb.db'
+            conn = sqlite3.connect(db_file)
+            try:
+                c = conn.cursor()
+                columns = list()
+                columns_data = list()
+                for k,v in large_database_sequences.items():
+                    columns.append(k)
+                    columns_data.append(v)
+                #adding file name to columns_data list at index 0
+                columns_data.insert(0, file)
+                #create tables and columns
+                # s = "CREATE TABLE IF NOT EXISTS sequences_large (File TEXT," + ', '.join(f"{col}INTEGER" for col in columns) + ")"
+                # s = "CREATE TABLE IF NOT EXISTS sequences_large (File Text," + ', '.join(["? INTEGER"] * len(columns)) + ")"
+                s = "CREATE TABLE IF NOT EXISTS sequences_large(File TEXT,AGATC,TTTTTTCT ,AATG,TCTAG ,GATA ,TATC ,GAAA,TCTG)"
+                c.execute(s)
+                conn.commit()
 
+                # t = "INSERT INTO sequences_large VALUES (" + ', '.join(["?"] * len(columns_data)) + ")"
+                # c.executemany(t, columns_data)
+                columns_as_str =  convert_to_str(columns)
+                columns_data_as_str = str(file) + ',' + convert_to_str(columns_data)
+                values = tupelise(columns_data)
+                print('values', values)
+                print('columns data', columns_data)
+                print('columns', columns_as_str)
+                # t = f"INSERT INTO sequences_large({columns_as_str}) VALUES ("+ ', '.join(["?"] * len(columns)) +")"
+                # c.execute(t, values,)
+                c.execute(t)
+                conn.commit()
+                conn.close()
+            except sqlite3.OperationalError as e:
+                # print('an error occurred!')
+                print('sqlite3 operational error',e)
+                #todo: work on storing these values!
+    #todo: work on the database/small
+    small_database = "databases/small.csv"
+    small_database_dnas = list()
+    small_database_sequences = {}
+    with open(small_database, newline='') as smallCSVFile:
+        reader = csv.DictReader(smallCSVFile)
+        # fetching only first row and append to list
+        for row in reader:
+            for k, v in row.items():
+                small_database_dnas.append(k)
+            break
+        small_database_dnas.pop(0)
+    # print(large_database_dnas)
+
+    # todo:get the count for every one in the dnas in every sequence.txt
+    for file in sequences_files:
+        lines = str()
+        with open(file, 'r') as f:
+            for line in f.readlines():
+                lines += line
+            # search for occurences of each substing
+            for item in small_database_dnas:
+                small_database_sequences[item] = 1
+            for key, value in small_database_sequences.items():
+                keylen = len(key)
+                tmpNum = 0
+                tmpNum2 = 0
+                tmp_dnaSequence = lines[:]
+                for i in range(len(tmp_dnaSequence)):
+                    # finding occurences by slicing and matching
+                    while tmpNum > 0:
+                        tmpNum -= 1
+                        continue
+                    if tmp_dnaSequence[i:i + keylen] == key:
+                        while tmp_dnaSequence[i:i + keylen] == tmp_dnaSequence[i - keylen:i]:
+                            tmpNum += 1
+                            i += keylen
+                        if tmpNum > tmpNum2:
+                            tmpNum2 = tmpNum
+                # assign it to its respective key in sequences
+                small_database_sequences[key] += tmpNum2
+            # print(file, small_database_sequences)
+    #retrueve every filename in sequences
 main()
