@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Pokedex</string>
+    <string name="release_text">Release</string>
+    <string name="catch_text">Catch!</string>
+</resources>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".PokemonActivity">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pokemon_name"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:paddingTop="30dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pokemon_number"
+        app:layout_constraintTop_toBottomOf="@+id/pokemon_name"
+        android:textAlignment="center"
+        android:textSize="18dp"
+        android:paddingTop="5dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pokemon_type1"
+        app:layout_constraintTop_toBottomOf="@+id/pokemon_number"
+        android:textAlignment="center"
+        android:textSize="16dp"
+        android:paddingTop="5dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pokemon_type2"
+        app:layout_constraintTop_toBottomOf="@+id/pokemon_type1"
+        android:textAlignment="center"
+        android:textSize="16dp"
+        android:paddingTop="5dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pokemon_description"
+        app:layout_constraintTop_toBottomOf="@+id/pokemon_type2"
+        android:textAlignment="center"
+        android:textSize="16dp"
+        android:paddingTop="20dp" />
+    <ImageView
+        android:id="@+id/pokemon_sprite"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_constraintTop_toBottomOf="@+id/pokemon_description"
+        app:layout_constraintBottom_toTopOf="@+id/catch_button"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="50dp"
+        android:padding="10dp"
+        android:text="@string/catch_text"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:id="@+id/catch_button"
+        android:onClick="toggleCatch"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
