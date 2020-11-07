@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Portfolio
+{% endblock %}
+
+{% block main %}
+<header class="alert alert-light">Portfolio</header>
+<div class="container">
+    <table class="container" style="border: 1px solid black;">
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+
+            <th>Price</th>
+            <th>Total Shares</th>
+        </tr>
+        {% for content in portfolio %}
+        <tr>
+            <td>{{ content[0] }}</td>
+            <td>{{ content[1] }}</td>
+
+            <td>{{ content[3] }}</td>
+            <td>{{ content[4] }}</td>
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <td>Cash</td>
+            <td></td>
+            <td></td>
+            <th>Grand Total</th>
+            <td>{{ cash }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

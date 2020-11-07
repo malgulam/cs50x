@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+History
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <header class="alert alert-dark">History</header>
+    <table>
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Shares</th>
+            <th>Price</th>
+            <th>Purchase Type</th>
+            <th>Date Created</th>
+        </tr>
+        {% for hist in history %}
+        <tr>
+            <td>{{ hist[0] }}</td>
+            <td>{{ hist[1] }}</td>
+            <td>{{ hist[2] }}</td>
+            <td>{{ hist[3] }}</td>
+            <td>{{ hist[4] }}</td>
+            <td>{{ hist[5] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

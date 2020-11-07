@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+DELETE ACCOUNT!
+{% endblock %}
+
+{% block main %}
+<header class="alert alert-danger">DELETE ACCOUNT</header>
+<div class="container">
+    <p>If you are certain you want to delete your account, type in your username and password for the last time.</p>
+    <form action="/delete_account" method="POST">
+        <div>
+            <input type="Text" name="Username" placeholder="Username">
+        </div>
+        <div>
+            <input type="Text" name="Password" placeholder="Password">
+        </div>
+        <input type="submit" class="btn btn-danger" value="Delete Account">
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Lookup Results
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <table class="alert alert-dark">
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Symbol</th>
+        </tr>
+        <tr>
+            <td>{{ results['name'] }}</td>
+            <td>{{ results['price'] }}</td>
+            <td>{{ results['symbol'] }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

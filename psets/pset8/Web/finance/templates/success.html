@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+
+{{ title }}
+
+{% endblock %}
+
+{% block main %}
+
+<div class="container alert alert-success">
+    <p>{{ message }}</p>
+    <a href="/{{ link }}" method="{{ method }}">{{ name }}</a>
+</div>
+
+{% endblock %}

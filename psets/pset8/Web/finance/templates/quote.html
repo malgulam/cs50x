@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Quote
+{% endblock %}
+
+{% block main %}
+<form action="/lookup_results" method="POST">
+    <input type="text" placeholder="Symbol" name="symbol" id="symbol" style="1px solid light-blue;">
+    <div>
+        <input type="submit" class="btn btn-primary" value="Lookup Stock">
+    </div>
+</form>
+{% endblock %}
